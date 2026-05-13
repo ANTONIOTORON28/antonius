@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+scikit-learn
+beautifulsoup4
+requests
+selenium
+webdriver-manager
+sentence-transformers
+torch
