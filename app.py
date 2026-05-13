@@ -27,10 +27,6 @@ def load_data():
 
     df = pd.read_csv("dataset_kapal_preprocessing.csv")
 
-    # =====================================================
-    # WAJIB ADA
-    # =====================================================
-
     required_columns = {
 
         "nama_paket": "-",
@@ -48,20 +44,12 @@ def load_data():
         "content": ""
     }
 
-    # =====================================================
-    # AUTO CREATE KOLOM
-    # =====================================================
-
     for col, default in required_columns.items():
 
         if col not in df.columns:
             df[col] = default
 
         df[col] = df[col].fillna(default)
-
-    # =====================================================
-    # AUTO CONTENT
-    # =====================================================
 
     df["content"] = (
 
@@ -82,13 +70,14 @@ def load_data():
 # =========================================================
 @st.cache_resource
 def load_model():
+
     return SentenceTransformer(
         "paraphrase-multilingual-MiniLM-L12-v2"
     )
 
 
 # =========================================================
-# EMBEDDING
+# CREATE EMBEDDINGS
 # =========================================================
 @st.cache_data
 def create_embeddings(_model, contents):
@@ -100,7 +89,7 @@ def create_embeddings(_model, contents):
 
 
 # =========================================================
-# LOAD
+# LOAD EVERYTHING
 # =========================================================
 df = load_data()
 
@@ -111,8 +100,9 @@ embeddings = create_embeddings(
     df["content"].tolist()
 )
 
+
 # =========================================================
-# RECOMMENDATION FUNCTION
+# RECOMMEND FUNCTION
 # =========================================================
 def recommend(query, top_k=5, kategori="Semua"):
 
@@ -128,6 +118,7 @@ def recommend(query, top_k=5, kategori="Semua"):
     results["score"] = similarity
 
     if kategori != "Semua":
+
         results = results[
             results["kategori"] == kategori
         ]
@@ -146,8 +137,8 @@ def recommend(query, top_k=5, kategori="Semua"):
 st.markdown("""
 <style>
 
-html, body, [class*="css"]  {
-    font-family: 'Segoe UI', sans-serif;
+html, body, [class*="css"]{
+    font-family:'Segoe UI', sans-serif;
 }
 
 .stApp{
@@ -155,8 +146,8 @@ html, body, [class*="css"]  {
     color:white;
 }
 
-section[data-testid="stSidebar"]{
-    display:none;
+#MainMenu, footer, header{
+    visibility:hidden;
 }
 
 .block-container{
@@ -169,122 +160,190 @@ section[data-testid="stSidebar"]{
 
 .hero{
     text-align:center;
-    padding:30px 20px 40px 20px;
+    padding:60px 20px 40px 20px;
 }
 
 .hero-title{
-    font-size:58px;
+
+    font-size:64px;
     font-weight:800;
     line-height:1.1;
-    background:linear-gradient(90deg,#ffffff,#67e8f9);
+
+    background:linear-gradient(
+        90deg,
+        #ffffff 0%,
+        #7dd3fc 50%,
+        #22d3ee 100%
+    );
+
     -webkit-background-clip:text;
     -webkit-text-fill-color:transparent;
+
+    margin-bottom:16px;
 }
 
 .hero-sub{
-    margin-top:14px;
-    color:#94a3b8;
+
     font-size:18px;
+    color:#94a3b8;
 }
 
-/* SEARCH */
+/* SEARCH BOX */
 
 .search-box{
+
     background:#0b1727;
     padding:28px;
-    border-radius:22px;
+    border-radius:24px;
+
     border:1px solid rgba(255,255,255,.05);
-    margin-bottom:25px;
+
+    margin-bottom:30px;
 }
 
 /* CARD */
 
 .card{
+
     background:#0b1727;
+
     border-radius:28px;
-    overflow:hidden;
+
+    padding:20px;
+
     border:1px solid rgba(255,255,255,.05);
+
     margin-bottom:24px;
-    transition:.3s;
 }
 
 .card:hover{
-    transform:translateY(-4px);
+    border:1px solid rgba(34,211,238,.30);
 }
+
+/* TITLE */
 
 .title{
-    font-size:30px;
+    font-size:32px;
     font-weight:700;
-    margin-bottom:6px;
+    margin-bottom:10px;
 }
 
+/* BADGE */
+
 .badge{
+
     display:inline-block;
-    padding:6px 14px;
-    border-radius:999px;
+
     background:#082f49;
+
     color:#67e8f9;
+
+    padding:6px 14px;
+
+    border-radius:999px;
+
     font-size:12px;
+
     margin-bottom:14px;
 }
 
+/* GRID */
+
 .info-grid{
+
     display:grid;
+
     grid-template-columns:1fr 1fr;
+
     gap:12px;
+
     margin-top:20px;
 }
 
 .info-item{
+
     background:#08111d;
+
     padding:14px;
+
     border-radius:14px;
 }
 
 .info-label{
+
     font-size:11px;
+
     color:#64748b;
-    margin-bottom:5px;
+
+    margin-bottom:6px;
+
     text-transform:uppercase;
 }
 
 .info-value{
+
     font-size:15px;
-    font-weight:600;
+
     color:white;
+
+    font-weight:600;
 }
 
+/* CHIP */
+
 .chip{
+
     display:inline-block;
-    padding:7px 12px;
+
     background:#08111d;
-    border-radius:10px;
-    margin:4px;
+
     color:#cbd5e1;
+
+    padding:7px 12px;
+
+    border-radius:10px;
+
+    margin:4px;
+
     font-size:12px;
 }
 
+/* DESCRIPTION */
+
 .desc{
+
     background:#08111d;
+
     padding:16px;
+
     border-radius:14px;
-    margin-top:18px;
-    color:#cbd5e1;
+
     line-height:1.8;
+
+    color:#cbd5e1;
+
+    margin-top:10px;
 }
 
+/* FOOTER */
+
 .footer{
+
     text-align:center;
-    margin-top:60px;
+
+    margin-top:70px;
+
     color:#64748b;
+
     font-size:13px;
 }
 
 </style>
 """, unsafe_allow_html=True)
 
+
 # =========================================================
-# HERO
+# HERO SECTION
 # =========================================================
 st.markdown("""
 <div class="hero">
@@ -301,6 +360,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
+
 # =========================================================
 # SEARCH PANEL
 # =========================================================
@@ -311,7 +371,7 @@ query = st.text_area(
     "Deskripsikan wisata impian Anda",
 
     placeholder=
-    "Contoh: Saya ingin kapal mewah untuk honeymoon 3 hari di Labuan Bajo dengan snorkeling dan sunset cruise",
+    "Contoh: kapal mewah untuk honeymoon 3 hari di Labuan Bajo dengan snorkeling dan sunset cruise",
 
     height=120
 )
@@ -349,8 +409,9 @@ with c3:
 
 st.markdown("</div>", unsafe_allow_html=True)
 
+
 # =========================================================
-# SEARCH PROCESS
+# SEARCH
 # =========================================================
 if search:
 
@@ -375,7 +436,7 @@ if search:
         )
 
         # =================================================
-        # RESULT LOOP
+        # SHOW RESULTS
         # =================================================
         for i, row in results.iterrows():
 
@@ -386,9 +447,7 @@ if search:
 
             img_col, detail_col = st.columns([1,1.4])
 
-            # =============================================
             # IMAGE
-            # =============================================
             with img_col:
 
                 image = row["image_url"]
@@ -400,76 +459,46 @@ if search:
                         use_container_width=True
                     )
 
-                else:
-
-                    st.image(
-                        "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-                        use_container_width=True
-                    )
-
-            # =============================================
             # DETAIL
-            # =============================================
             with detail_col:
 
                 st.markdown(f"""
-                <div style="padding:20px">
+                <div class="badge">
+                    🚢 {row["kategori"]}
+                </div>
 
-                    <div class="badge">
-                        🚢 {row["kategori"]}
-                    </div>
+                <div class="title">
+                    {row["nama_paket"]}
+                </div>
 
-                    <div class="title">
-                        {row["nama_paket"]}
-                    </div>
-
-                    <div style="
-                        color:#94a3b8;
-                        margin-bottom:12px;
-                    ">
-                        Kapal: {row["nama_kapal"]}
-                    </div>
-
+                <div style="
+                    color:#94a3b8;
+                    margin-bottom:12px;
+                ">
+                    Kapal: {row["nama_kapal"]}
                 </div>
                 """, unsafe_allow_html=True)
 
-                # =========================================
-                # INFO GRID
-                # =========================================
                 st.markdown(f"""
                 <div class="info-grid">
 
                     <div class="info-item">
-                        <div class="info-label">
-                            Harga
-                        </div>
-                        <div class="info-value">
-                            {row["harga"]}
-                        </div>
+                        <div class="info-label">Harga</div>
+                        <div class="info-value">{row["harga"]}</div>
                     </div>
 
                     <div class="info-item">
-                        <div class="info-label">
-                            Durasi
-                        </div>
-                        <div class="info-value">
-                            {row["durasi"]}
-                        </div>
+                        <div class="info-label">Durasi</div>
+                        <div class="info-value">{row["durasi"]}</div>
                     </div>
 
                     <div class="info-item">
-                        <div class="info-label">
-                            Kapasitas
-                        </div>
-                        <div class="info-value">
-                            {row["kapasitas"]}
-                        </div>
+                        <div class="info-label">Kapasitas</div>
+                        <div class="info-value">{row["kapasitas"]}</div>
                     </div>
 
                     <div class="info-item">
-                        <div class="info-label">
-                            Similarity
-                        </div>
+                        <div class="info-label">Similarity</div>
                         <div class="info-value">
                             {round(row["score"]*100,2)}%
                         </div>
@@ -478,16 +507,11 @@ if search:
                 </div>
                 """, unsafe_allow_html=True)
 
-                # =========================================
-                # DESTINATION
-                # =========================================
+                # DESTINASI
                 st.markdown("### 📍 Destinasi")
-
                 st.write(row["destinasi"])
 
-                # =========================================
-                # FACILITY
-                # =========================================
+                # FASILITAS
                 st.markdown("### ✨ Fasilitas")
 
                 fasilitas = str(
@@ -497,14 +521,13 @@ if search:
                 for f in fasilitas:
 
                     if f.strip():
+
                         st.markdown(
                             f'<span class="chip">{f}</span>',
                             unsafe_allow_html=True
                         )
 
-                # =========================================
-                # SERVICE
-                # =========================================
+                # LAYANAN
                 st.markdown("### 🏝️ Layanan")
 
                 layanan = str(
@@ -514,14 +537,13 @@ if search:
                 for l in layanan:
 
                     if l.strip():
+
                         st.markdown(
                             f'<span class="chip">{l}</span>',
                             unsafe_allow_html=True
                         )
 
-                # =========================================
-                # DESCRIPTION
-                # =========================================
+                # DESKRIPSI
                 st.markdown("### 📋 Deskripsi")
 
                 st.markdown(f"""
@@ -530,9 +552,7 @@ if search:
                 </div>
                 """, unsafe_allow_html=True)
 
-                # =========================================
                 # BUTTON
-                # =========================================
                 if row["link"] != "-":
 
                     st.link_button(
@@ -545,12 +565,16 @@ if search:
                 unsafe_allow_html=True
             )
 
+
 # =========================================================
 # FOOTER
 # =========================================================
 st.markdown("""
 <div class="footer">
+
     ⚓ Phinisi Recommendation System <br>
+
     Sentence-BERT · Content-Based Filtering
+
 </div>
 """, unsafe_allow_html=True)
