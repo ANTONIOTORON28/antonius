@@ -39,7 +39,7 @@ st.set_page_config(
 # ─────────────────────────────────────────
 @st.cache_data
 def load_data():
-    df = pd.read_csv("final_dataset.csv")
+    df = pd.read_csv("dataset_kapal_preprocessing.csv")
     df["content"] = df["content"].fillna("")
     return df
 
